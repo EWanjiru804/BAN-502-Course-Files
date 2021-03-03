@@ -1,0 +1,64 @@
+```{r}
+library(tidyverse)
+library(GGally)
+library(tidymodels)
+```
+
+
+```{r}
+air= airquality
+```
+
+
+```{r}
+str(air)
+```
+
+
+```{r}
+summary(air)
+```
+
+```{r}
+air2 = drop_na(air)
+```
+
+```{r}
+ggpairs(air2)
+```
+```{r}
+ggcorr(air2, label = TRUE)
+```
+```{r}
+ggplot(air2, aes(x=Temp, y=Ozone ))+
+  geom_point()
+
+```
+```{r}
+lm_model=
+  linear_reg()%>%
+  set_engine("lm")
+air_simple= recipe(Ozone ~ Temp,air2)
+lm_wflow =
+  workflow () %>%
+  add_model(lm_model)%>%
+  add_recipe(air_simple)
+lm_fit = fit(lm_wflow, air2)
+  
+```
+```{r}
+summary(lm_fit$fit$fit$fit)
+```
+```{r}
+confint(lm_fit$fit$fit$fit)
+```
+```{r}
+ggplot(air2, aes(x=Temp, y=Ozone ))+
+  geom_point()+
+  geom_smooth(method =”lm“, se = FALSE)”
+
+```
+```{r}
+predict(lm_fit,)
+```
+
