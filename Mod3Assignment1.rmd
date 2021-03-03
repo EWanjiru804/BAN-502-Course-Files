@@ -1,0 +1,98 @@
+---
+output:
+  word_document: default
+  html_document: default
+---
+```{r}
+library(tidyverse)
+library(tidymodels)
+library(lubridate)
+```
+
+```{r}
+bike_cleaned <- read_csv("C:/Users/Karibu/Desktop/UNCW/Spring 1 2021/BAN 502/Module 3/bike_cleaned.csv")
+bike = bike_cleaned
+```
+
+
+```{r}
+bike = bike %>% mutate(dteday = mdy(dteday))
+bike <- mutate_if(bike, is.character, as.factor)
+bike$hr <- as.factor(bike$hr)
+```
+
+
+```{r}
+set.seed(1234)
+bike_split = initial_split(bike, prob = 0.70, strata = count)
+train = training(bike_split)
+test = testing(bike_split)
+```
+    There are 4343 rows of data in testing and 13036 in training.
+
+    
+```{r}
+bike2 = train %>% dplyr::select(season, mnth, hr, holiday,weekday, temp,weathersit)
+```
+
+```{r}
+bike_recipe = recipe(count ~ temp, train)
+lm_model =
+linear_reg()%>%
+set_engine("lm")
+
+lm_flow=
+  workflow()%>%
+  add_model(lm_model)%>%
+  add_recipe(bike_recipe)
+
+lm_fit= fit(lm_flow, train)
+```
+
+
+```{r}
+summary(lm_fit$fit$fit$fit)
+```
+```{r}
+predict_train <- predict(lm_fit,train)
+predict_train
+
+
+```
+Task 4: Use the predict functions to make predictions (using your model from Task 3) on thetrainingset.Hint: Be sure to store the predictions in an object, perhaps named “predict_train” or similar.Develop a histogram of the predictions (Hint: The predictions are likely stored in a variable called “.pred” inyour predictions object). Comment on the distribution of the predictions.
+```{r}
+```
+
+
+```{r}
+ggplot(predict_train,aes(x=.pred))+
+geom_histogram()
+```
+
+```{r}
+bike_recipe_2 = recipe(count ~ temp, test)
+lm_model =
+linear_reg()%>%
+set_engine("lm")
+
+lm_flow=
+  workflow()%>%
+  add_model(lm_model)%>%
+  add_recipe(bike_recipe)
+
+lm_fit= fit(lm_flow, test)
+```
+
+
+```{r}
+summary(lm_fit$fit$fit$fit)
+```
+
+The R squared of the test model is smaller than the fitting model, hence the model is not overfitting.
+    
+    
+    
+    
+    
+    
+    
